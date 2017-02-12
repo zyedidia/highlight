@@ -7,7 +7,13 @@ import (
 
 func combineLineMatch(src, dst LineMatch) LineMatch {
 	for k, v := range src {
-		dst[k] = v
+		if g, ok := dst[k]; ok {
+			if g == "" {
+				dst[k] = v
+			}
+		} else {
+			dst[k] = v
+		}
 	}
 	return dst
 }
@@ -123,7 +129,9 @@ func (h *Highlighter) highlightEmptyRegion(start int, canMatchEnd bool, lineNum 
 		matches := FindAllIndex(p.regex, line, start == 0, canMatchEnd)
 		for _, m := range matches {
 			highlights[start+m[0]] = p.group
-			highlights[start+m[1]] = ""
+			if _, ok := highlights[start+m[1]]; !ok {
+				highlights[start+m[1]] = ""
+			}
 		}
 	}
 
