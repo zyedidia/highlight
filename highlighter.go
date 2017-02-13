@@ -76,18 +76,23 @@ func (h *Highlighter) highlightRegion(start int, canMatchEnd bool, lineNum int, 
 	if loc != nil {
 		if region.parent == nil {
 			highlights[start+loc[1]] = ""
-			return combineLineMatch(highlights, combineLineMatch(h.highlightRegion(start, false, lineNum, line[:loc[0]], region), h.highlightEmptyRegion(start+loc[1], canMatchEnd, lineNum, line[loc[1]:])))
-		} else {
-			highlights[start+loc[1]] = region.parent.group
-			return combineLineMatch(highlights, combineLineMatch(h.highlightRegion(start, false, lineNum, line[:loc[0]], region), h.highlightRegion(start+loc[1], canMatchEnd, lineNum, line[loc[1]:], region.parent)))
+			return combineLineMatch(highlights,
+				combineLineMatch(h.highlightRegion(start, false, lineNum, line[:loc[0]], region),
+					h.highlightEmptyRegion(start+loc[1], canMatchEnd, lineNum, line[loc[1]:])))
 		}
+		highlights[start+loc[1]] = region.parent.group
+		return combineLineMatch(highlights,
+			combineLineMatch(h.highlightRegion(start, false, lineNum, line[:loc[0]], region),
+				h.highlightRegion(start+loc[1], canMatchEnd, lineNum, line[loc[1]:], region.parent)))
 	}
 
 	for _, r := range region.rules.regions {
 		loc = FindIndex(r.start, line, start == 0, canMatchEnd)
 		if loc != nil {
 			highlights[start+loc[0]] = r.group
-			return combineLineMatch(highlights, combineLineMatch(h.highlightRegion(start, false, lineNum, line[:loc[0]], region), h.highlightRegion(start+loc[1], canMatchEnd, lineNum, line[loc[1]:], r)))
+			return combineLineMatch(highlights,
+				combineLineMatch(h.highlightRegion(start, false, lineNum, line[:loc[0]], region),
+					h.highlightRegion(start+loc[1], canMatchEnd, lineNum, line[loc[1]:], r)))
 		}
 	}
 
@@ -121,7 +126,9 @@ func (h *Highlighter) highlightEmptyRegion(start int, canMatchEnd bool, lineNum 
 		loc := FindIndex(r.start, line, start == 0, canMatchEnd)
 		if loc != nil {
 			highlights[start+loc[0]] = r.group
-			return combineLineMatch(highlights, combineLineMatch(h.highlightEmptyRegion(start, false, lineNum, line[:loc[0]]), h.highlightRegion(start+loc[1], canMatchEnd, lineNum, line[loc[1]:], r)))
+			return combineLineMatch(highlights,
+				combineLineMatch(h.highlightEmptyRegion(start, false, lineNum, line[:loc[0]]),
+					h.highlightRegion(start+loc[1], canMatchEnd, lineNum, line[loc[1]:], r)))
 		}
 	}
 
