@@ -19,7 +19,7 @@ func combineLineMatch(src, dst LineMatch) LineMatch {
 }
 
 type Highlighter struct {
-	states []*Region
+	states [][2]*Region
 	def    *Def
 }
 
@@ -66,7 +66,7 @@ func (h *Highlighter) highlightRegion(start int, canMatchEnd bool, lineNum int, 
 
 	if len(line) == 0 {
 		if canMatchEnd {
-			h.states[lineNum] = region
+			h.states[lineNum][1] = region
 		}
 
 		return highlights
@@ -107,7 +107,7 @@ func (h *Highlighter) highlightRegion(start int, canMatchEnd bool, lineNum int, 
 	}
 
 	if canMatchEnd {
-		h.states[lineNum] = region
+		h.states[lineNum][1] = region
 	}
 
 	return highlights
@@ -117,7 +117,7 @@ func (h *Highlighter) highlightEmptyRegion(start int, canMatchEnd bool, lineNum 
 	highlights := make(LineMatch)
 	if len(line) == 0 {
 		if canMatchEnd {
-			h.states[lineNum] = nil
+			h.states[lineNum][1] = nil
 		}
 		return highlights
 	}
@@ -143,7 +143,7 @@ func (h *Highlighter) highlightEmptyRegion(start int, canMatchEnd bool, lineNum 
 	}
 
 	if canMatchEnd {
-		h.states[lineNum] = nil
+		h.states[lineNum][1] = nil
 	}
 
 	return highlights
@@ -153,14 +153,22 @@ func (h *Highlighter) Highlight(input string, startline int) []LineMatch {
 	lines := strings.Split(input, "\n")
 	var lineMatches []LineMatch
 
-	h.states = make([]*Region, len(lines))
+	lastStates := h.states
+	h.states = make([][2]*Region, len(lines))
+
+	optimize := len(lastStates) == len(h.states)
 
 	for i := startline; i < len(lines); i++ {
 		line := []byte(lines[i])
-		if i == 0 || h.states[i-1] == nil {
+
+		if i != 0 && optimize && h.states[i-1][1] == lastStates[i-1][1] {
+			break
+		}
+
+		if i == 0 || h.states[i-1][1] == nil {
 			lineMatches = append(lineMatches, h.highlightEmptyRegion(0, true, i, line))
 		} else {
-			lineMatches = append(lineMatches, h.highlightRegion(0, true, i, line, h.states[i-1]))
+			lineMatches = append(lineMatches, h.highlightRegion(0, true, i, line, h.states[i-1][1]))
 		}
 	}
 
