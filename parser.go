@@ -1,8 +1,8 @@
 package highlight
 
 import (
-	"encoding/json"
 	"fmt"
+	"gopkg.in/yaml.v2"
 	"regexp"
 )
 
@@ -47,8 +47,8 @@ type Region struct {
 // ParseDef parses an input syntax file into a highlight Def
 // Note that ParseDef may return multiple errors
 func ParseDef(input []byte) (*Def, error) {
-	var rules map[string]interface{}
-	if err := json.Unmarshal(input, &rules); err != nil {
+	var rules map[interface{}]interface{}
+	if err := yaml.Unmarshal(input, &rules); err != nil {
 		return nil, err
 	}
 
@@ -60,7 +60,7 @@ func ParseDef(input []byte) (*Def, error) {
 
 			s.ft = filetype
 		} else if k == "detect" {
-			ftdetect := v.(map[string]interface{})
+			ftdetect := v.(map[interface{}]interface{})
 			if len(ftdetect) >= 1 {
 				syntax, err := regexp.Compile(ftdetect["filename"].(string))
 				if err != nil {
@@ -96,7 +96,7 @@ func parseRules(input []interface{}, curRegion *Region) (*Rules, error) {
 	rules := new(Rules)
 
 	for _, v := range input {
-		rule := v.(map[string]interface{})
+		rule := v.(map[interface{}]interface{})
 		for k, val := range rule {
 			group := k
 
@@ -108,10 +108,10 @@ func parseRules(input []interface{}, curRegion *Region) (*Rules, error) {
 					return nil, err
 				}
 
-				rules.patterns = append(rules.patterns, &Pattern{group, r})
-			case map[string]interface{}:
+				rules.patterns = append(rules.patterns, &Pattern{group.(string), r})
+			case map[interface{}]interface{}:
 				// Region
-				region, err := parseRegion(group, object, curRegion)
+				region, err := parseRegion(group.(string), object, curRegion)
 				if err != nil {
 					return nil, err
 				}
@@ -125,7 +125,7 @@ func parseRules(input []interface{}, curRegion *Region) (*Rules, error) {
 	return rules, nil
 }
 
-func parseRegion(group string, regionInfo map[string]interface{}, prevRegion *Region) (*Region, error) {
+func parseRegion(group string, regionInfo map[interface{}]interface{}, prevRegion *Region) (*Region, error) {
 	var err error
 
 	region := new(Region)
