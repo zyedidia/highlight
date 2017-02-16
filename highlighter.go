@@ -18,9 +18,17 @@ func combineLineMatch(src, dst LineMatch) LineMatch {
 	return dst
 }
 
+type State *Region
+
+type LineStates interface {
+	Lines() [][]byte
+	State(lineN int) State
+	SetState(lineN int, s State)
+}
+
 type Highlighter struct {
-	states [][2]*Region
-	def    *Def
+	endRegions []*Region
+	def        *Def
 }
 
 func NewHighlighter(def *Def) *Highlighter {
@@ -66,7 +74,7 @@ func (h *Highlighter) highlightRegion(start int, canMatchEnd bool, lineNum int, 
 
 	if len(line) == 0 {
 		if canMatchEnd {
-			h.states[lineNum][1] = region
+			h.endRegions[lineNum] = region
 		}
 
 		return highlights
@@ -107,7 +115,7 @@ func (h *Highlighter) highlightRegion(start int, canMatchEnd bool, lineNum int, 
 	}
 
 	if canMatchEnd {
-		h.states[lineNum][1] = region
+		h.endRegions[lineNum] = region
 	}
 
 	return highlights
@@ -117,7 +125,7 @@ func (h *Highlighter) highlightEmptyRegion(start int, canMatchEnd bool, lineNum 
 	highlights := make(LineMatch)
 	if len(line) == 0 {
 		if canMatchEnd {
-			h.states[lineNum][1] = nil
+			h.endRegions[lineNum] = nil
 		}
 		return highlights
 	}
@@ -143,33 +151,54 @@ func (h *Highlighter) highlightEmptyRegion(start int, canMatchEnd bool, lineNum 
 	}
 
 	if canMatchEnd {
-		h.states[lineNum][1] = nil
+		h.endRegions[lineNum] = nil
 	}
 
 	return highlights
 }
 
-func (h *Highlighter) Highlight(input string, startline int) []LineMatch {
+func (h *Highlighter) Highlight(input string) []LineMatch {
 	lines := strings.Split(input, "\n")
 	var lineMatches []LineMatch
 
-	lastStates := h.states
-	h.states = make([][2]*Region, len(lines))
+	h.endRegions = make([]*Region, len(lines))
 
-	optimize := len(lastStates) == len(h.states)
+	for i := 0; i < len(lines); i++ {
+		line := []byte(lines[i])
+
+		if i == 0 || h.endRegions[i-1] == nil {
+			lineMatches = append(lineMatches, h.highlightEmptyRegion(0, true, i, line))
+		} else {
+			lineMatches = append(lineMatches, h.highlightRegion(0, true, i, line, h.endRegions[i-1]))
+		}
+	}
+
+	return lineMatches
+}
+
+func (h *Highlighter) ReHighlight(input LineStates, startline int) []LineMatch {
+	lines := input.Lines()
+	var lineMatches []LineMatch
+
+	h.endRegions = make([]*Region, len(lines))
 
 	for i := startline; i < len(lines); i++ {
 		line := []byte(lines[i])
 
-		if i != 0 && optimize && h.states[i-1][1] == lastStates[i-1][1] {
+		if i == 0 || h.endRegions[i-1] == nil {
+			lineMatches = append(lineMatches, h.highlightEmptyRegion(0, true, i, line))
+		} else {
+			lineMatches = append(lineMatches, h.highlightRegion(0, true, i, line, h.endRegions[i-1]))
+		}
+
+		curState := h.endRegions[i]
+		lastState := input.State(i)
+
+		if curState == lastState {
 			break
 		}
 
-		if i == 0 || h.states[i-1][1] == nil {
-			lineMatches = append(lineMatches, h.highlightEmptyRegion(0, true, i, line))
-		} else {
-			lineMatches = append(lineMatches, h.highlightRegion(0, true, i, line, h.states[i-1][1]))
-		}
+		input.SetState(i, curState)
 	}
 
 	return lineMatches
