@@ -28,4 +28,3 @@ rules:
     - special: "#"
     # Commit IDs
     - identifier: "[0-9a-f]{7,40}"
-    

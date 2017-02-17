@@ -12,4 +12,3 @@ rules:
         start: "#"
         end: "$"
         rules: []
-        

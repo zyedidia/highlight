@@ -36,4 +36,3 @@ rules:
         end: "'"
         rules:
             - constant.specialChar: "\\\\."
-            

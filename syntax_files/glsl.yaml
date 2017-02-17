@@ -20,4 +20,3 @@ rules:
     - brightwhite,cyan: "TODO:?"
     - ,green: "[[:space:]]+$"
     - ,red: "	+ +| +	+"
-    

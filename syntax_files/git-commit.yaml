@@ -28,4 +28,3 @@ rules:
     - special: "#"
     # Trailing spaces (+LINT is not ok, git uses tabs)
     - error: "[[:space:]]+$"
-    
