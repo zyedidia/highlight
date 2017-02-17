@@ -17,4 +17,3 @@ rules:
     - brightblue: "\\<brightblue\\>"
     - brightmagenta: "\\<brightmagenta\\>"
     - brightcyan: "\\<brightcyan\\>"
-    
