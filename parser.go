@@ -45,7 +45,6 @@ type Region struct {
 }
 
 // ParseDef parses an input syntax file into a highlight Def
-// Note that ParseDef may return multiple errors
 func ParseDef(input []byte) (*Def, error) {
 	var rules map[interface{}]interface{}
 	if err := yaml.Unmarshal(input, &rules); err != nil {
