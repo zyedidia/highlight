@@ -1,0 +1,19 @@
+filetype: colortest
+
+detect:
+    filename: "ColorTest$"
+
+rules:
+    - black: "\\<PLAIN\\>"
+    - red: "\\<red\\>"
+    - green: "\\<green\\>"
+    - yellow: "\\<yellow\\>"
+    - blue: "\\<blue\\>"
+    - magenta: "\\<magenta\\>"
+    - cyan: "\\<cyan\\>"
+    - brightred: "\\<brightred\\>"
+    - brightgreen: "\\<brightgreen\\>"
+    - brightyellow: "\\<brightyellow\\>"
+    - brightblue: "\\<brightblue\\>"
+    - brightmagenta: "\\<brightmagenta\\>"
+    - brightcyan: "\\<brightcyan\\>"

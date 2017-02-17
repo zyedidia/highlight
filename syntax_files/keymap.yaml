@@ -1,0 +1,23 @@
+filetype: keymap
+
+detect:
+    filename: "\\.(k|key)?map$|Xmodmap$"
+
+rules:
+    - cyan: "\\<(add|clear|compose|keycode|keymaps|keysym|remove|string)\\>"
+    - cyan: "\\<(control|alt|shift)\\>"
+    - blue: "\\<[0-9]+\\>"
+    - red: "="
+    - yellow:
+        start: "\""
+        end: "\""
+        rules:
+            - constant.specialChar: "\\\\."
+    - yellow:
+        start: "'"
+        end: "'"
+        rules:
+            - constant.specialChar: "\\\\."
+    - brightblack: "^!.*$"
+    - ,green: "[[:space:]]+$"
+    - ,red: "	+ +| +	+"
