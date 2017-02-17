@@ -1,0 +1,18 @@
+filetype: rst
+
+detect:
+    filename: "\\.rest$|\\.rst$"
+
+rules:
+    - red: "\\*\\*[^*]+\\*\\*"
+    - brightred: "::"
+    - blue: "`[^`]+`_{1,2}"
+    - yellow: "``[^`]+``"
+    - cyan: "^\\.\\. .*$"
+    - cyan: "^__ .*$"
+    - yellow: "^###+$"
+    - yellow: "^\\*\\*\\*+$"
+    - magenta: "^===+$"
+    - red: "^---+$"
+    - green: "^\\^\\^\\^+$"
+    - blue: "^\"\"\"+$"
