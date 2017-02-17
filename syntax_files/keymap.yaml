@@ -4,20 +4,21 @@ detect:
     filename: "\\.(k|key)?map$|Xmodmap$"
 
 rules:
-    - cyan: "\\<(add|clear|compose|keycode|keymaps|keysym|remove|string)\\>"
-    - cyan: "\\<(control|alt|shift)\\>"
-    - blue: "\\<[0-9]+\\>"
-    - red: "="
-    - yellow:
+    - statement: "\\b(add|clear|compose|keycode|keymaps|keysym|remove|string)\\b"
+    - statement: "\\b(control|alt|shift)\\b"
+    - constant.number: "\\b[0-9]+\\b"
+    - special: "="
+    - constant.string:
         start: "\""
         end: "\""
         rules:
             - constant.specialChar: "\\\\."
-    - yellow:
+    - constant.string:
         start: "'"
         end: "'"
         rules:
             - constant.specialChar: "\\\\."
-    - brightblack: "^!.*$"
-    - ,green: "[[:space:]]+$"
-    - ,red: "	+ +| +	+"
+    - comment:
+        start: "^!"
+        end: "$"
+        rules: []
