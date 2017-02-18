@@ -6,6 +6,8 @@ languages currently supported, see the [`syntax_files`](./syntax_files) director
 Highlight allows you to pass in a string and get back all the information you need to syntax highlight
 that string well.
 
+This project is still a work in progress and more features and documentation will be coming later.
+
 # Installation
 
 ```
@@ -14,7 +16,8 @@ go get github.com/zyedidia/highlight
 
 # Usage
 
-Here is how to use this package to highlight a string:
+Here is how to use this package to highlight a string. We will also be using `github.com/fatih/color` to actually
+colorize the output to the console.
 
 ```go
 package main
@@ -29,7 +32,7 @@ import (
 )
 
 func main() {
-    // Here is going to be the go code we highlight
+    // Here is the go code we will highlight
     inputString := `
 package main
 
@@ -108,7 +111,7 @@ func main() {
 ```
 
 If you would like to automatically detect the filetype of a file based on the filename, and have the appropriate definition returned,
-you can use the `DetectFiletype`:
+you can use the `DetectFiletype` function:
 
 ```go
 // Name of the file
@@ -123,3 +126,5 @@ var defs []*highlight.Def
 def := highlight.DetectFiletype(defs, filename, firstLine)
 fmt.Println("Filetype is", def.ft)
 ```
+
+For a full example, see the [`syncat`](./examples) example which acts like cat but will syntax highlight the output (if highlight recognizes the filetype).
