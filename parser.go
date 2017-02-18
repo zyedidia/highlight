@@ -2,8 +2,9 @@ package highlight
 
 import (
 	"fmt"
-	"gopkg.in/yaml.v2"
 	"regexp"
+
+	"gopkg.in/yaml.v2"
 )
 
 // A Def is a full syntax definition for a language
@@ -45,13 +46,23 @@ type Region struct {
 }
 
 // ParseDef parses an input syntax file into a highlight Def
-func ParseDef(input []byte) (*Def, error) {
+func ParseDef(input []byte) (s *Def, err error) {
+	// This is just so if we have an error, we can exit cleanly and return the parse error to the user
+	defer func() {
+		if e := recover(); e != nil {
+			// fmt.Println("Micro encountered an error:", err)
+			// Print the stack trace too
+			// fmt.Print(errors.Wrap(err, 2).ErrorStack())
+			err = e.(error)
+		}
+	}()
+
 	var rules map[interface{}]interface{}
-	if err := yaml.Unmarshal(input, &rules); err != nil {
+	if err = yaml.Unmarshal(input, &rules); err != nil {
 		return nil, err
 	}
 
-	s := new(Def)
+	s = new(Def)
 
 	for k, v := range rules {
 		if k == "filetype" {
@@ -88,7 +99,7 @@ func ParseDef(input []byte) (*Def, error) {
 		}
 	}
 
-	return s, nil
+	return s, err
 }
 
 func parseRules(input []interface{}, curRegion *Region) (*Rules, error) {
