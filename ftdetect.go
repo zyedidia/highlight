@@ -1,10 +1,6 @@
 package highlight
 
-import "bytes"
-
-func DetectFiletype(defs []*Def, filename string, fileSrc []byte) *Def {
-	firstLine := bytes.Split(fileSrc, []byte("\n"))[0]
-
+func DetectFiletype(defs []*Def, filename string, firstLine []byte) *Def {
 	for _, d := range defs {
 		if d.ftdetect[0].Match([]byte(filename)) {
 			return d

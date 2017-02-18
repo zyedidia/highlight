@@ -1,7 +1,7 @@
 filetype: c
 
 detect:
-    filename: "\\.(c|C)$"
+    filename: "(\\.(c|C)$|\\.(h|H)$|\\.ii?$|\\.(def)$)"
 
 rules:
     - identifier: "\\b[A-Z_][0-9A-Z_]+\\b" 
