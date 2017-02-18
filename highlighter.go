@@ -27,7 +27,7 @@ type LineStates interface {
 }
 
 type Highlighter struct {
-	endRegions []*Region
+	lastRegion *Region
 	def        *Def
 }
 
@@ -74,7 +74,7 @@ func (h *Highlighter) highlightRegion(start int, canMatchEnd bool, lineNum int, 
 
 	if len(line) == 0 {
 		if canMatchEnd {
-			h.endRegions[lineNum] = region
+			h.lastRegion = region
 		}
 
 		return highlights
@@ -115,7 +115,7 @@ func (h *Highlighter) highlightRegion(start int, canMatchEnd bool, lineNum int, 
 	}
 
 	if canMatchEnd {
-		h.endRegions[lineNum] = region
+		h.lastRegion = region
 	}
 
 	return highlights
@@ -125,7 +125,7 @@ func (h *Highlighter) highlightEmptyRegion(start int, canMatchEnd bool, lineNum 
 	highlights := make(LineMatch)
 	if len(line) == 0 {
 		if canMatchEnd {
-			h.endRegions[lineNum] = nil
+			h.lastRegion = nil
 		}
 		return highlights
 	}
@@ -151,7 +151,7 @@ func (h *Highlighter) highlightEmptyRegion(start int, canMatchEnd bool, lineNum 
 	}
 
 	if canMatchEnd {
-		h.endRegions[lineNum] = nil
+		h.lastRegion = nil
 	}
 
 	return highlights
@@ -161,15 +161,13 @@ func (h *Highlighter) Highlight(input string) []LineMatch {
 	lines := strings.Split(input, "\n")
 	var lineMatches []LineMatch
 
-	h.endRegions = make([]*Region, len(lines))
-
 	for i := 0; i < len(lines); i++ {
 		line := []byte(lines[i])
 
-		if i == 0 || h.endRegions[i-1] == nil {
+		if i == 0 || h.lastRegion == nil {
 			lineMatches = append(lineMatches, h.highlightEmptyRegion(0, true, i, line))
 		} else {
-			lineMatches = append(lineMatches, h.highlightRegion(0, true, i, line, h.endRegions[i-1]))
+			lineMatches = append(lineMatches, h.highlightRegion(0, true, i, line, h.lastRegion))
 		}
 	}
 
@@ -180,18 +178,16 @@ func (h *Highlighter) ReHighlight(input LineStates, startline int) []LineMatch {
 	lines := input.Lines()
 	var lineMatches []LineMatch
 
-	h.endRegions = make([]*Region, len(lines))
-
 	for i := startline; i < len(lines); i++ {
 		line := []byte(lines[i])
 
-		if i == 0 || h.endRegions[i-1] == nil {
+		if i == 0 || h.lastRegion == nil {
 			lineMatches = append(lineMatches, h.highlightEmptyRegion(0, true, i, line))
 		} else {
-			lineMatches = append(lineMatches, h.highlightRegion(0, true, i, line, h.endRegions[i-1]))
+			lineMatches = append(lineMatches, h.highlightRegion(0, true, i, line, h.lastRegion))
 		}
 
-		curState := h.endRegions[i]
+		curState := h.lastRegion
 		lastState := input.State(i)
 
 		if curState == lastState {

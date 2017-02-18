@@ -28,3 +28,4 @@ rules:
     - comment:
         start: "\\\\begin\\{comment\\}"
         end: "\\\\end\\{comment\\}"
+        rules: []

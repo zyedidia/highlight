@@ -6,7 +6,7 @@ detect:
 rules:
     # Operators and punctuation
     - statement: "(\\*|/|%|\\+|-|>>|<<|>>>|&|\\^(\\^)?|\\||~)?="
-    - statement: "\\.\\.(\\.)?|!|\\*|&|~|\\(|\\)|\\[|\\]|\\\|/|\\+|-|%|<|>|\\?|:|;"
+    - statement: "\\.\\.(\\.)?|!|\\*|&|~|\\(|\\)|\\[|\\]|\\\\|/|\\+|-|%|<|>|\\?|:|;"
     # Octal integer literals are deprecated
     - error: "(0[0-7_]*)(L[uU]?|[uU]L?)?"
     # Decimal integer literals

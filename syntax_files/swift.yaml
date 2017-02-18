@@ -5,7 +5,7 @@ detect:
 
 rules:
     # Operators
-    - statement: "[.:;,+*|=!?\\%]" "<" ">" "/" "-" "&"
+    - statement: "([.:;,+*|=!?\\%]|<|>|/|-|&)"
 
       # Statements
     - statement:  "(class|import|let|var|struct|enum|func|if|else|switch|case|default|for|in|internal|external|unowned|private|public|throws)\\ "

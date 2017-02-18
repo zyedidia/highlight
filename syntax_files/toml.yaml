@@ -23,8 +23,8 @@ rules:
     - constant.string:
         start: "'"
         end: "'"
-        rules: 
-    - constant.specialChar: "\\\\."
+        rules:
+            - constant.specialChar: "\\\\."
 
     - constant.string:
         start: "`"

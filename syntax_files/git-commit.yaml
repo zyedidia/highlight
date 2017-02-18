@@ -18,7 +18,7 @@ rules:
     - keyword: "#[[:space:]]new file:"
     - keyword: "#[[:space:]]renamed:"
     # Untracked filenames
-    - error: "^#	[^/?*:;{}\\\\]+\.[^/?*:;{}\\\\]+$"
+    - error: "^#	[^/?*:;{}\\\\]+\\.[^/?*:;{}\\\\]+$"
     - keyword: "^#[[:space:]]Changes.*[:]"
     - keyword: "^#[[:space:]]Your branch and '[^']+"
     - keyword: "^#[[:space:]]Your branch and '"

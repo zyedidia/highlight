@@ -17,10 +17,10 @@ rules:
         start: "//"
         end: "$"
         rules:
-            todo: "TODO:?"
+            - todo: "TODO:?"
 
     - comment:
         start: "/\\*"
         end: "\\*/"
         rules:
-            todo: "TODO:?"
+            - todo: "TODO:?"
