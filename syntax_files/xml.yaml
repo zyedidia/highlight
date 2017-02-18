@@ -13,4 +13,4 @@ rules:
         start: "<!--"
         end: "-->"
         rules: []
-    – special: "&[^;]*;"
+    - special: "&[^;]*;"
