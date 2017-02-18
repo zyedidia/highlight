@@ -94,14 +94,22 @@ func (h *Highlighter) highlightRegion(start int, canMatchEnd bool, lineNum int, 
 				h.highlightRegion(start+loc[1], canMatchEnd, lineNum, line[loc[1]:], region.parent)))
 	}
 
+	firstLoc := []int{len(line), 0}
+	var firstRegion *Region
 	for _, r := range region.rules.regions {
-		loc = FindIndex(r.start, line, start == 0, canMatchEnd)
+		loc := FindIndex(r.start, line, start == 0, canMatchEnd)
 		if loc != nil {
-			highlights[start+loc[0]] = r.group
-			return combineLineMatch(highlights,
-				combineLineMatch(h.highlightRegion(start, false, lineNum, line[:loc[0]], region),
-					h.highlightRegion(start+loc[1], canMatchEnd, lineNum, line[loc[1]:], r)))
+			if loc[0] < firstLoc[0] {
+				firstLoc = loc
+				firstRegion = r
+			}
 		}
+	}
+	if firstLoc[0] != len(line) {
+		highlights[start+firstLoc[0]] = firstRegion.group
+		return combineLineMatch(highlights,
+			combineLineMatch(h.highlightRegion(start, false, lineNum, line[:firstLoc[0]], region),
+				h.highlightRegion(start+firstLoc[1], canMatchEnd, lineNum, line[firstLoc[1]:], firstRegion)))
 	}
 
 	for _, p := range region.rules.patterns {
@@ -130,14 +138,22 @@ func (h *Highlighter) highlightEmptyRegion(start int, canMatchEnd bool, lineNum 
 		return highlights
 	}
 
+	firstLoc := []int{len(line), 0}
+	var firstRegion *Region
 	for _, r := range h.def.rules.regions {
 		loc := FindIndex(r.start, line, start == 0, canMatchEnd)
 		if loc != nil {
-			highlights[start+loc[0]] = r.group
-			return combineLineMatch(highlights,
-				combineLineMatch(h.highlightEmptyRegion(start, false, lineNum, line[:loc[0]]),
-					h.highlightRegion(start+loc[1], canMatchEnd, lineNum, line[loc[1]:], r)))
+			if loc[0] < firstLoc[0] {
+				firstLoc = loc
+				firstRegion = r
+			}
 		}
+	}
+	if firstLoc[0] != len(line) {
+		highlights[start+firstLoc[0]] = firstRegion.group
+		return combineLineMatch(highlights,
+			combineLineMatch(h.highlightEmptyRegion(start, false, lineNum, line[:firstLoc[0]]),
+				h.highlightRegion(start+firstLoc[1], canMatchEnd, lineNum, line[firstLoc[1]:], firstRegion)))
 	}
 
 	for _, p := range h.def.rules.patterns {
