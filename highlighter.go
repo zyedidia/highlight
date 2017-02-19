@@ -216,6 +216,11 @@ func (h *Highlighter) ReHighlightLine(input LineStates, lineN int) {
 
 	line := []byte(lines[lineN])
 
+	h.lastRegion = nil
+	if lineN > 0 {
+		h.lastRegion = input.State(lineN - 1)
+	}
+
 	var match LineMatch
 	if lineN == 0 || h.lastRegion == nil {
 		match = h.highlightEmptyRegion(0, true, lineN, line)
@@ -247,11 +252,11 @@ func (h *Highlighter) ReHighlight(input LineStates, startline int) {
 		curState := h.lastRegion
 		lastState := input.State(i)
 
+		input.SetMatch(i, match)
+		input.SetState(i, curState)
+
 		if curState == lastState {
 			break
 		}
-
-		input.SetMatch(i, match)
-		input.SetState(i, curState)
 	}
 }
