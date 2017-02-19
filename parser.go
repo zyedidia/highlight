@@ -12,7 +12,7 @@ import (
 // on filename or header (the first line of the file)
 // Then it has the rules which define how to highlight the file
 type Def struct {
-	ft       string
+	FileType string
 	ftdetect []*regexp.Regexp
 	rules    *Rules
 }
@@ -68,7 +68,7 @@ func ParseDef(input []byte) (s *Def, err error) {
 		if k == "filetype" {
 			filetype := v.(string)
 
-			s.ft = filetype
+			s.FileType = filetype
 		} else if k == "detect" {
 			ftdetect := v.(map[interface{}]interface{})
 			if len(ftdetect) >= 1 {

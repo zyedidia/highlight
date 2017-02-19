@@ -39,7 +39,7 @@ func main() {
 
 	h := highlight.NewHighlighter(def)
 
-	matches := h.Highlight(string(fileSrc))
+	matches := h.HighlightString(string(fileSrc))
 
 	lines := strings.Split(string(fileSrc), "\n")
 	for lineN, l := range lines {

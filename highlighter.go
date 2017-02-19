@@ -21,7 +21,7 @@ func combineLineMatch(src, dst LineMatch) LineMatch {
 type State *Region
 
 type LineStates interface {
-	Lines() [][]byte
+	LineData() [][]byte
 	State(lineN int) State
 	SetState(lineN int, s State)
 }
@@ -173,7 +173,7 @@ func (h *Highlighter) highlightEmptyRegion(start int, canMatchEnd bool, lineNum 
 	return highlights
 }
 
-func (h *Highlighter) Highlight(input string) []LineMatch {
+func (h *Highlighter) HighlightString(input string) []LineMatch {
 	lines := strings.Split(input, "\n")
 	var lineMatches []LineMatch
 
@@ -190,10 +190,35 @@ func (h *Highlighter) Highlight(input string) []LineMatch {
 	return lineMatches
 }
 
-func (h *Highlighter) ReHighlight(input LineStates, startline int) []LineMatch {
-	lines := input.Lines()
+func (h *Highlighter) Highlight(input LineStates, startline int) []LineMatch {
+	lines := input.LineData()
 	var lineMatches []LineMatch
 
+	for i := startline; i < len(lines); i++ {
+		line := []byte(lines[i])
+
+		if i == 0 || h.lastRegion == nil {
+			lineMatches = append(lineMatches, h.highlightEmptyRegion(0, true, i, line))
+		} else {
+			lineMatches = append(lineMatches, h.highlightRegion(0, true, i, line, h.lastRegion))
+		}
+
+		curState := h.lastRegion
+
+		input.SetState(i, curState)
+	}
+
+	return lineMatches
+}
+
+func (h *Highlighter) ReHighlight(input LineStates, startline int) []LineMatch {
+	lines := input.LineData()
+	var lineMatches []LineMatch
+
+	h.lastRegion = nil
+	if startline > 0 {
+		h.lastRegion = input.State(startline - 1)
+	}
 	for i := startline; i < len(lines); i++ {
 		line := []byte(lines[i])
 

@@ -124,7 +124,7 @@ var defs []*highlight.Def
 ...
 
 def := highlight.DetectFiletype(defs, filename, firstLine)
-fmt.Println("Filetype is", def.ft)
+fmt.Println("Filetype is", def.FileType)
 ```
 
 For a full example, see the [`syncat`](./examples) example which acts like cat but will syntax highlight the output (if highlight recognizes the filetype).
