@@ -30,6 +30,7 @@ type Pattern struct {
 type Rules struct {
 	regions  []*Region
 	patterns []*Pattern
+	includes []string
 }
 
 // A Region is a highlighted region (such as a multiline comment, or a string)
@@ -50,9 +51,6 @@ func ParseDef(input []byte) (s *Def, err error) {
 	// This is just so if we have an error, we can exit cleanly and return the parse error to the user
 	defer func() {
 		if e := recover(); e != nil {
-			// fmt.Println("Micro encountered an error:", err)
-			// Print the stack trace too
-			// fmt.Print(errors.Wrap(err, 2).ErrorStack())
 			err = e.(error)
 		}
 	}()
@@ -102,6 +100,42 @@ func ParseDef(input []byte) (s *Def, err error) {
 	return s, err
 }
 
+func ResolveIncludes(defs []*Def) {
+	for _, d := range defs {
+		resolveIncludesInDef(defs, d)
+	}
+}
+
+func resolveIncludesInDef(defs []*Def, d *Def) {
+	for _, lang := range d.rules.includes {
+		for _, searchDef := range defs {
+			if lang == searchDef.FileType {
+				d.rules.patterns = append(d.rules.patterns, searchDef.rules.patterns...)
+				d.rules.regions = append(d.rules.regions, searchDef.rules.regions...)
+			}
+		}
+	}
+	for _, r := range d.rules.regions {
+		resolveIncludesInRegion(defs, r)
+		r.parent = nil
+	}
+}
+
+func resolveIncludesInRegion(defs []*Def, region *Region) {
+	for _, lang := range region.rules.includes {
+		for _, searchDef := range defs {
+			if lang == searchDef.FileType {
+				region.rules.patterns = append(region.rules.patterns, searchDef.rules.patterns...)
+				region.rules.regions = append(region.rules.regions, searchDef.rules.regions...)
+			}
+		}
+	}
+	for _, r := range region.rules.regions {
+		resolveIncludesInRegion(defs, r)
+		r.parent = region
+	}
+}
+
 func parseRules(input []interface{}, curRegion *Region) (*Rules, error) {
 	rules := new(Rules)
 
@@ -112,13 +146,17 @@ func parseRules(input []interface{}, curRegion *Region) (*Rules, error) {
 
 			switch object := val.(type) {
 			case string:
-				// Pattern
-				r, err := regexp.Compile(object)
-				if err != nil {
-					return nil, err
-				}
+				if k == "include" {
+					rules.includes = append(rules.includes, object)
+				} else {
+					// Pattern
+					r, err := regexp.Compile(object)
+					if err != nil {
+						return nil, err
+					}
 
-				rules.patterns = append(rules.patterns, &Pattern{group.(string), r})
+					rules.patterns = append(rules.patterns, &Pattern{group.(string), r})
+				}
 			case map[interface{}]interface{}:
 				// Region
 				region, err := parseRegion(group.(string), object, curRegion)

@@ -28,6 +28,8 @@ func main() {
 		}
 	}
 
+	highlight.ResolveIncludes(defs)
+
 	fileSrc, _ := ioutil.ReadFile(os.Args[1])
 	def := highlight.DetectFiletype(defs, os.Args[1], bytes.Split(fileSrc, []byte("\n"))[0])
 
@@ -73,7 +75,7 @@ func main() {
 			colN++
 		}
 		if group, ok := matches[lineN][colN]; ok {
-			if group == "" {
+			if group == "default" || group == "" {
 				color.Unset()
 			}
 		}
