@@ -61,7 +61,7 @@ func main() {
     // Matches is an array of maps which point to groups
     // matches[lineNum][colNum] will give you the change in group at that line and column number
     // Note that there is only a group at a line and column number if the syntax highlighting changed at that position
-    matches := h.Highlight(inputString)
+    matches := h.HighlightString(inputString)
 
     // We split the string into a bunch of lines
     // Now we will print the string
