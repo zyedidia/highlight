@@ -11,15 +11,14 @@ import (
 	"github.com/zyedidia/highlight"
 )
 
-var defs []*highlight.Def
-
 func main() {
+	var defs []*highlight.Def
 	gopath := os.Getenv("GOPATH")
 	files, _ := ioutil.ReadDir(gopath + "/src/github.com/zyedidia/highlight/syntax_files")
 
 	for _, f := range files {
 		if strings.HasSuffix(f.Name(), ".yaml") {
-			input, _ := ioutil.ReadFile(gopath + "/src/github.com/zyedidia/highlight/syntax_files")
+			input, _ := ioutil.ReadFile(gopath + "/src/github.com/zyedidia/highlight/syntax_files/" + f.Name())
 			d, err := highlight.ParseDef(input)
 			if err != nil {
 				fmt.Println(err)
