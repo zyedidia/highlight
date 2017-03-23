@@ -29,18 +29,6 @@ rules:
       # numbers
     - constant.number: "\\b[0-9]+\\b"
 
-    - constant.string:
-        start: "\""
-        end: "\""
-        rules:
-            - constant.specialChar: "\\\\."
-
-    - constant.string:
-        start: "'"
-        end: "'"
-        rules:
-            - constant.specialChar: "\\\\."
-
     - comment:
         start: "#"
         end: "$"
@@ -55,3 +43,15 @@ rules:
         start: "'''"
         end: "'''"
         rules: []
+
+    - constant.string:
+        start: "\""
+        end: "\""
+        rules:
+            - constant.specialChar: "\\\\."
+
+    - constant.string:
+        start: "'"
+        end: "'"
+        rules:
+            - constant.specialChar: "\\\\."
