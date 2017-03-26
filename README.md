@@ -71,36 +71,36 @@ func main() {
             // Check if the group changed at the current position
             if group, ok := matches[lineN][colN]; ok {
                 // Check the group name and set the color accordingly (the colors chosen are arbitrary)
-                if group == "statement" {
-                    color.Set(color.FgGreen)
-                } else if group == "identifier" {
-                    color.Set(color.FgBlue)
-                } else if group == "preproc" {
-                    color.Set(color.FgHiRed)
-                } else if group == "special" {
-                    color.Set(color.FgRed)
-                } else if group == "constant.string" {
-                    color.Set(color.FgCyan)
-                } else if group == "constant" {
-                    color.Set(color.FgCyan)
-                } else if group == "constant.specialChar" {
-                    color.Set(color.FgHiMagenta)
-                } else if group == "type" {
-                    color.Set(color.FgYellow)
-                } else if group == "constant.number" {
-                    color.Set(color.FgCyan)
-                } else if group == "comment" {
-                    color.Set(color.FgHiGreen)
-                } else {
-                    color.Unset()
-                }
+				if group == highlight.Groups["statement"] {
+					color.Set(color.FgGreen)
+				} else if group == highlight.Groups["identifier"] {
+					color.Set(color.FgBlue)
+				} else if group == highlight.Groups["preproc"] {
+					color.Set(color.FgHiRed)
+				} else if group == highlight.Groups["special"] {
+					color.Set(color.FgRed)
+				} else if group == highlight.Groups["constant.string"] {
+					color.Set(color.FgCyan)
+				} else if group == highlight.Groups["constant"] {
+					color.Set(color.FgCyan)
+				} else if group == highlight.Groups["constant.specialChar"] {
+					color.Set(color.FgHiMagenta)
+				} else if group == highlight.Groups["type"] {
+					color.Set(color.FgYellow)
+				} else if group == highlight.Groups["constant.number"] {
+					color.Set(color.FgCyan)
+				} else if group == highlight.Groups["comment"] {
+					color.Set(color.FgHiGreen)
+				} else {
+					color.Unset()
+				}
             }
             // Print the character
             fmt.Print(string(c))
         }
         // This is at a newline, but highlighting might have been turned off at the very end of the line so we should check that.
         if group, ok := matches[lineN][len(l)]; ok {
-            if group == "" {
+			if group == highlight.Groups["default"] || group == highlight.Groups[""] {
                 color.Unset()
             }
         }

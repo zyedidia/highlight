@@ -4,8 +4,22 @@ import (
 	"fmt"
 	"regexp"
 
+	"github.com/dlclark/regexp2"
+
 	"gopkg.in/yaml.v2"
 )
+
+var Groups map[string]uint8
+var numGroups uint8
+
+func GetGroup(n uint8) string {
+	for k, v := range Groups {
+		if v == n {
+			return k
+		}
+	}
+	return ""
+}
 
 // A Def is a full syntax definition for a language
 // It has a filetype, information about how to detect the filetype based
@@ -21,7 +35,7 @@ type Def struct {
 // It has a group that the rule belongs to, as well as
 // the regular expression to match the pattern
 type Pattern struct {
-	group string
+	group uint8
 	regex *regexp.Regexp
 }
 
@@ -39,11 +53,15 @@ type Rules struct {
 // region and also rules from the above region do not match inside this region
 // Note that a region may contain more regions
 type Region struct {
-	group  string
+	group  uint8
 	parent *Region
-	start  *regexp.Regexp
-	end    *regexp.Regexp
+	start  *regexp2.Regexp
+	end    *regexp2.Regexp
 	rules  *Rules
+}
+
+func init() {
+	Groups = make(map[string]uint8)
 }
 
 // ParseDef parses an input syntax file into a highlight Def
@@ -155,7 +173,13 @@ func parseRules(input []interface{}, curRegion *Region) (*Rules, error) {
 						return nil, err
 					}
 
-					rules.patterns = append(rules.patterns, &Pattern{group.(string), r})
+					groupStr := group.(string)
+					if _, ok := Groups[groupStr]; !ok {
+						numGroups++
+						Groups[groupStr] = numGroups
+					}
+					groupNum := Groups[groupStr]
+					rules.patterns = append(rules.patterns, &Pattern{groupNum, r})
 				}
 			case map[interface{}]interface{}:
 				// Region
@@ -177,16 +201,21 @@ func parseRegion(group string, regionInfo map[interface{}]interface{}, prevRegio
 	var err error
 
 	region := new(Region)
-	region.group = group
+	if _, ok := Groups[group]; !ok {
+		numGroups++
+		Groups[group] = numGroups
+	}
+	groupNum := Groups[group]
+	region.group = groupNum
 	region.parent = prevRegion
 
-	region.start, err = regexp.Compile(regionInfo["start"].(string))
+	region.start, err = regexp2.Compile(regionInfo["start"].(string), 0)
 
 	if err != nil {
 		return nil, err
 	}
 
-	region.end, err = regexp.Compile(regionInfo["end"].(string))
+	region.end, err = regexp2.Compile(regionInfo["end"].(string), 0)
 
 	if err != nil {
 		return nil, err

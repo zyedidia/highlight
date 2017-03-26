@@ -26,5 +26,3 @@ rules:
     - keyword: "^#[[:space:]]On branch"
     # Recolor hash symbols
     - special: "#"
-    # Trailing spaces (+LINT is not ok, git uses tabs)
-    - error: "[[:space:]]+$"

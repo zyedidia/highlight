@@ -47,25 +47,25 @@ func main() {
 		colN := 0
 		for _, c := range l {
 			if group, ok := matches[lineN][colN]; ok {
-				if group == "statement" {
+				if group == highlight.Groups["statement"] {
 					color.Set(color.FgGreen)
-				} else if group == "identifier" {
+				} else if group == highlight.Groups["identifier"] {
 					color.Set(color.FgBlue)
-				} else if group == "preproc" {
+				} else if group == highlight.Groups["preproc"] {
 					color.Set(color.FgHiRed)
-				} else if group == "special" {
+				} else if group == highlight.Groups["special"] {
 					color.Set(color.FgRed)
-				} else if group == "constant.string" {
+				} else if group == highlight.Groups["constant.string"] {
 					color.Set(color.FgCyan)
-				} else if group == "constant" {
+				} else if group == highlight.Groups["constant"] {
 					color.Set(color.FgCyan)
-				} else if group == "constant.specialChar" {
+				} else if group == highlight.Groups["constant.specialChar"] {
 					color.Set(color.FgHiMagenta)
-				} else if group == "type" {
+				} else if group == highlight.Groups["type"] {
 					color.Set(color.FgYellow)
-				} else if group == "constant.number" {
+				} else if group == highlight.Groups["constant.number"] {
 					color.Set(color.FgCyan)
-				} else if group == "comment" {
+				} else if group == highlight.Groups["comment"] {
 					color.Set(color.FgHiGreen)
 				} else {
 					color.Unset()
@@ -75,7 +75,7 @@ func main() {
 			colN++
 		}
 		if group, ok := matches[lineN][colN]; ok {
-			if group == "default" || group == "" {
+			if group == highlight.Groups["default"] || group == highlight.Groups[""] {
 				color.Unset()
 			}
 		}
