@@ -14,6 +14,6 @@ func DetectFiletype(defs []*Def, filename string, firstLine []byte) *Def {
 
 	emptyDef := new(Def)
 	emptyDef.FileType = "Unknown"
-	emptyDef.rules = new(Rules)
+	emptyDef.rules = new(rules)
 	return emptyDef
 }

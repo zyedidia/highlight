@@ -47,6 +47,7 @@ func main() {
 		colN := 0
 		for _, c := range l {
 			if group, ok := matches[lineN][colN]; ok {
+				// There are more possible groups available than just these ones
 				if group == highlight.Groups["statement"] {
 					color.Set(color.FgGreen)
 				} else if group == highlight.Groups["identifier"] {
