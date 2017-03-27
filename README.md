@@ -1,4 +1,7 @@
 # Highlight
+[![Go Report Card](https://goreportcard.com/badge/github.com/zyedidia/highlight)](https://goreportcard.com/report/github.com/zyedidia/highlight)
+[![GoDoc](https://godoc.org/github.com/zyedidia/highlight?status.svg)](http://godoc.org/github.com/zyedidia/highlight)
+[![MIT License](https://img.shields.io/badge/license-MIT-blue.svg)](https://github.com/zyedidia/highlight/blob/master/LICENSE)
 
 This is a package for syntax highlighting a large number of different languages. To see the list of
 languages currently supported, see the [`syntax_files`](./syntax_files) directory.
