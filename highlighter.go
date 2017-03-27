@@ -3,9 +3,22 @@ package highlight
 import (
 	"regexp"
 	"strings"
+	"unicode/utf8"
 
 	"github.com/dlclark/regexp2"
 )
+
+// RunePos returns the rune index of a given byte index
+// This could cause problems if the byte index is between code points
+func runePos(p int, str string) int {
+	if p < 0 {
+		return 0
+	}
+	if p >= len(str) {
+		return utf8.RuneCountInString(str)
+	}
+	return utf8.RuneCountInString(str[:p])
+}
 
 func combineLineMatch(src, dst LineMatch) LineMatch {
 	for k, v := range src {
@@ -66,6 +79,7 @@ func findIndex(regex *regexp2.Regexp, str []rune, canMatchStart, canMatchEnd boo
 		return nil
 	}
 	return []int{match.Index, match.Index + match.Length}
+	// return []int{runePos(match.Index, string(str)), runePos(match.Index+match.Length, string(str))}
 }
 
 func findAllIndex(regex *regexp.Regexp, str []rune, canMatchStart, canMatchEnd bool) [][]int {
@@ -80,7 +94,12 @@ func findAllIndex(regex *regexp.Regexp, str []rune, canMatchStart, canMatchEnd b
 			return nil
 		}
 	}
-	return regex.FindAllIndex([]byte(string(str)), -1)
+	matches := regex.FindAllIndex([]byte(string(str)), -1)
+	for i, m := range matches {
+		matches[i][0] = runePos(m[0], string(str))
+		matches[i][1] = runePos(m[1], string(str))
+	}
+	return matches
 }
 
 func (h *Highlighter) highlightRegion(highlights LineMatch, start int, canMatchEnd bool, lineNum int, line []rune, curRegion *region, statesOnly bool) LineMatch {
