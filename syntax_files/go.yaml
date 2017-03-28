@@ -29,7 +29,8 @@ rules:
 
     - constant.string:
         start: "\""
-        end: "(?<!\\\\)\""
+        end: "\""
+        skip: "\\\\."
         rules:
             - constant.specialChar: "%."
             - constant.specialChar: "\\\\[abfnrtv'\\\"\\\\]"
@@ -37,7 +38,8 @@ rules:
 
     - constant.string:
         start: "'"
-        end: "(?<!\\\\)'"
+        end: "'"
+        skip: "\\\\."
         rules:
             - error: "..+"
             - constant.specialChar: "%."
