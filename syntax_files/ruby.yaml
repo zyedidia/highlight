@@ -1,7 +1,7 @@
 filetype: ruby
 
 detect: 
-    filename: "\\.rb$|\\.gemspec$|Gemfile|config.ru|Rakefile|Capfile|Vagrantfile"
+    filename: "\\.rb$|\\.ru|\\.rbx|\\.rake|\\.gemspec$|Gemfile|Rakefile|Capfile|Vagrantfile"
     header: "^#!.*/(env +)?ruby( |$)"
 
 rules:
@@ -16,6 +16,10 @@ rules:
     - special: "#\\{[^}]*\\}"
     - constant.string: "'([^']|(\\\\'))*'|%[qw]\\{[^}]*\\}|%[qw]\\([^)]*\\)|%[qw]<[^>]*>|%[qw]\\[[^]]*\\]|%[qw]\\$[^$]*\\$|%[qw]\\^[^^]*\\^|%[qw]![^!]*!"
     - comment: "#[^{].*$|#$"
+    - comment:
+        start: "=begin"
+        end: "=end"
+        rules: []
     - comment.bright: "##[^{].*$|##$"
     - constant.macro:
         start: "<<-?'?EOT'?"
