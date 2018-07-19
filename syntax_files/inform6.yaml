@@ -1,0 +1,31 @@
+filetype: inform6
+
+detect:
+    filename: "\\.inf$"
+
+rules:
+    - statement: "\\b(box|break|continue|do|else|font(\\s+)(on|off)|for|give|if|jump|new_line|objectloop|print|print_ret|remove|return|rfalse|rtrue|spaces|string|style(\\s+)(roman|bold|underline|reverse|fixed)|switch|until|while|has|hasnt|in|notin|ofclass|provides|or)\\b"
+    - preproc: "^[[:space:]]*#[[:space:]]*(Abbreviate|Array|Attribute|Class|Constant|Default|End|Endif|Extend|Global|Ifdef|Ifndef|Ifnot|Iftrue|Iffalse|Import|Include|Link|Lowstring|Message|Object|Property|Release|Replace|Serial|Switches|Statusline(\\s+)(score|time)|System_file|Verb|Zcharacter)"
+    - constant: "'([^'\\\\]|(\\\\[\"'abfnrtv\\\\]))'"
+    - constant: "\\b(true|false)\\b"
+    - constant: "\\b(nothing)\\b"
+    - symbol.operator: "([.:;,+*|=!\\%]|<|>|/|-|&)" 
+    - symbol.brackets: "[(){}]|\\[|\\]"
+    - constant.number: "(\\b[0-9]+|\\$[0-9A-Fa-f]+\\b|\\$\\$[01]+)"
+
+    - constant.string:
+        start: "\""
+        end: "\""
+        skip: "\\\\."
+        rules:
+            - constant.specialChar: "[^@]\\\\."
+            - constant.specialChar: "[~]"
+            - constant.specialChar: "\\^"
+            - constant.specialChar: "@(@[0-9]+|['`:c\\\\~o]|ss|oe|ae|OE|AE|th|et|LL|!!|\\?\\?|<<|>>|{[0-9a-fA-F]+})"
+
+    - comment:
+        start: "!"
+        end: "$"
+        rules:
+            - todo: "(TODO|XXX|FIXME):?"
+
