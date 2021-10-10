@@ -107,6 +107,8 @@ func main() {
 }
 ```
 
+## Automatically Detecting Filetypes
+
 If you would like to automatically detect the filetype of a file based on the filename, and have the appropriate definition returned,
 you can use the `DetectFiletype` function:
 
@@ -123,5 +125,48 @@ var defs []*highlight.Def
 def := highlight.DetectFiletype(defs, filename, firstLine)
 fmt.Println("Filetype is", def.FileType)
 ```
+
+## Embedded Syntax Files
+
+You can embed the syntax files directly in your program by using the `AllDefs` function. For example,
+
+```go
+package main
+
+import (
+    "fmt"
+    "io/ioutil"
+    "strings"
+
+    "github.com/zyedidia/highlight"
+)
+
+func main() {
+    // Load all the syntax files
+    defs,err := highlight.AllDefs()
+    if err != nil {
+        panic(err)
+    }
+    // Detect filetype of a file
+    def := highlight.DetectFiletype(defs, filename, firstLine)
+    if def == nil {
+        // ....
+    } else {
+        // ....
+    }
+}
+```
+
+If you only want to read specific syntax files, you can pass the filetypes as an argument, for example:
+
+```go
+    // Load specific filetypes
+    defs,err := highlight.AllDefs("c", "c++", "python", "go")
+    if err != nil {
+        panic(err)
+    }
+```
+
+# Examples
 
 For a full example, see the [`syncat`](./examples) example which acts like cat but will syntax highlight the output (if highlight recognizes the filetype).
