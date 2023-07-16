@@ -199,6 +199,11 @@ func (h *Highlighter) highlightRegion(highlights LineMatch, start int, canMatchE
 }
 
 func (h *Highlighter) highlightEmptyRegion(highlights LineMatch, start int, canMatchEnd bool, lineNum int, line []rune, statesOnly bool) LineMatch {
+	if h.Def.rules == nil {
+            return nil
+        }
+
+
 	if len(line) == 0 {
 		if canMatchEnd {
 			h.lastRegion = nil
