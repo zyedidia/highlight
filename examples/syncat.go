@@ -9,7 +9,7 @@ import (
 	"log"
 
 	"github.com/fatih/color"
-	"github.com/jessp01/highlight"
+	"github.com/zyedidia/highlight"
 )
 
 func main() {
@@ -24,7 +24,7 @@ func main() {
 	if gopath == "" {
 	    syn_dir = "/etc/highlight"
 	}else{
-	    syn_dir = gopath + "/src/github.com/jessp01/highlight/syntax_files"
+	    syn_dir = gopath + "/src/github.com/zyedidia/highlight/syntax_files"
 	}
 
 	var defs []*highlight.Def
