@@ -41,13 +41,17 @@ func main() {
 import "fmt"
 
 // A hello world program
-func main() {
+func helloWorld() {
     fmt.Println("Hello world")
 }`
 
     // Load the go syntax file
     // Make sure that the syntax_files directory is in the current directory
-    syntaxFile, _ := ioutil.ReadFile("highlight/syntax_files/go.yaml")
+    syntaxFile, lerr := ioutil.ReadFile("highlight/syntax_files/go.yaml")
+    if lerr != nil {
+        fmt.Println(lerr)
+	return
+    }    
 
     // Parse it into a `*highlight.Def`
     syntaxDef, err := highlight.ParseDef(syntaxFile)

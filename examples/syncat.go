@@ -19,7 +19,11 @@ func main() {
 
 	var defs []*highlight.Def
 	gopath := os.Getenv("GOPATH")
-	files, _ := ioutil.ReadDir(gopath + "/src/github.com/zyedidia/highlight/syntax_files")
+	files, lerr := ioutil.ReadDir(gopath + "/src/github.com/zyedidia/highlight/syntax_files")
+	if lerr != nil {
+	    fmt.Println(lerr)
+	    return
+	}
 
 	for _, f := range files {
 		if strings.HasSuffix(f.Name(), ".yaml") {
