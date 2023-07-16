@@ -6,9 +6,10 @@ import (
 	"io/ioutil"
 	"os"
 	"strings"
+	"log"
 
 	"github.com/fatih/color"
-	"github.com/zyedidia/highlight"
+	"github.com/jessp01/highlight"
 )
 
 func main() {
@@ -17,24 +18,19 @@ func main() {
 		return
 	}
 
-	var defs []*highlight.Def
 	gopath := os.Getenv("GOPATH")
-	files, lerr := ioutil.ReadDir(gopath + "/src/github.com/zyedidia/highlight/syntax_files")
-	if lerr != nil {
-	    fmt.Println(lerr)
-	    return
+
+	var syn_dir string
+	if gopath == "" {
+	    syn_dir = "/etc/highlight"
+	}else{
+	    syn_dir = gopath + "/src/github.com/jessp01/highlight/syntax_files"
 	}
 
-	for _, f := range files {
-		if strings.HasSuffix(f.Name(), ".yaml") {
-			input, _ := ioutil.ReadFile(gopath + "/src/github.com/zyedidia/highlight/syntax_files/" + f.Name())
-			d, err := highlight.ParseDef(input)
-			if err != nil {
-				fmt.Println(err)
-				continue
-			}
-			defs = append(defs, d)
-		}
+	var defs []*highlight.Def
+	err := highlight.ParseSyntaxFiles (syn_dir, &defs)
+	if err != nil {
+	    log.Fatal(err)
 	}
 
 	highlight.ResolveIncludes(defs)
