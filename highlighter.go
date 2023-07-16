@@ -5,7 +5,7 @@ import (
 	"strings"
 	"unicode/utf8"
 	"path/filepath"
-	"os/ioutil"
+	"io/ioutil"
 )
 
 // RunePos returns the rune index of a given byte index
