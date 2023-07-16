@@ -4,6 +4,7 @@ import (
 	"regexp"
 	"strings"
 	"unicode/utf8"
+	"path/filepath"
 )
 
 // RunePos returns the rune index of a given byte index
@@ -59,6 +60,29 @@ func NewHighlighter(def *Def) *Highlighter {
 // LineMatch represents the syntax highlighting matches for one line. Each index where the coloring is changed is marked with that
 // color's group (represented as one byte)
 type LineMatch map[int]Group
+
+func ParseSyntaxFiles (dir string, defs *[]*highlight.Def) error{
+   pattern := "*.yaml"
+   files, err := filepath.Glob(dir + "/" + pattern)
+   if err != nil {
+      return err
+   }
+
+   for _, file_path := range(files){
+	file, err := ioutil.ReadFile(file_path)
+	if err != nil {
+		return err
+	}
+
+	d, err := highlight.ParseDef(file)
+	if err != nil {
+		log.Output(1, err.Error())
+		continue
+	}
+	*defs = append(*defs, d)
+	return nil
+    }
+}
 
 func findIndex(regex *regexp.Regexp, skip *regexp.Regexp, str []rune, canMatchStart, canMatchEnd bool) []int {
 	regexStr := regex.String()
